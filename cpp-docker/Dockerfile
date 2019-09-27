@@ -125,9 +125,12 @@ ADD package.json ./package.json
 
 RUN git clone https://github.com/delislesim/theia-trace-extension.git && \
 cd theia-trace-extension && \
-git fetch && git checkout theiaCompass && rm yarn.lock && \
+git fetch && git checkout theiaCompass && rm yarn.lock
 #yarn --cache-folder ./ycache && rm -rf ./ycache
-cd viewer-prototype && yarn --cache-folder ./ycache && rm -rf ./ycache
+
+ADD fixed_package.json ./package.json
+RUN yarn --cache-folder ./ycache && rm -rf ./ycache
+#RUN cd viewer-prototype && yarn --cache-folder ./ycache && rm -rf ./ycache
 
 WORKDIR /home/theia
 
