@@ -25,7 +25,9 @@ RUN apt-get update && \
                        wget \
                        xz-utils \
                        libx11-dev \
-                       libxkbfile-dev && \
+                       libxkbfile-dev \
+                       pkg-config \
+                       openjdk-8-jdk && \
     rm -rf /var/lib/apt/lists/* 
 # libx11-dev and libxkbfile-dev should not be necessary
 
@@ -125,11 +127,12 @@ ADD package.json ./package.json
 
 RUN git clone https://github.com/delislesim/theia-trace-extension.git && \
 cd theia-trace-extension && \
-git fetch && git checkout theiaCompass && rm yarn.lock
+git fetch && git checkout theiaCompass && rm yarn.lock && \
+yarn --cache-folder ./ycache && rm -rf ./ycache
 #yarn --cache-folder ./ycache && rm -rf ./ycache
 
-ADD fixed_package.json ./package.json
-RUN yarn --cache-folder ./ycache && rm -rf ./ycache
+#ADD fixed_root_package.json ./package.json
+#RUN yarn --cache-folder ./ycache && rm -rf ./ycache
 #RUN cd viewer-prototype && yarn --cache-folder ./ycache && rm -rf ./ycache
 
 WORKDIR /home/theia
@@ -154,8 +157,10 @@ ENV SHELL /bin/bash
 
 COPY trace-compass-server.tar.gz .
 RUN tar -zxvf trace-compass-server.tar.gz
+EXPOSE 8080
 
 COPY startscript.sh /usr/bin/startscript
+#RUN ["chmod", "+x", "/usr/bin/startscript"]
 
 ENTRYPOINT ["/usr/bin/startscript"]
 #ENTRYPOINT [ "node", "/home/theia/src-gen/backend/main.js", "/home/project", "--hostname=0.0.0.0" ]
